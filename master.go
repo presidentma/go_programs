@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 func main(){
+	var arrBuf ArrayType=[]int{5,6,7,9}
 	/* 指针pointer */
 	a:="string";
 	ptr:=&a;
@@ -101,10 +102,70 @@ func main(){
 		recover()	//recover panic
 		fmt.Println("exec over!")
 	}()
-	panic("panic")
 	
+	// panic("panic")
+	/* 方法methods */
+	/* func (t TypeName) MethodName (ParamList ) (Returnlist) {
+		//method body
+	} */
+	arrBuf.foreach()
+	var number1 Int = 10
+	number1.set(5)	//方法值调用
+	(*Int).set(&number1,15) //表达式调用
+	fmt.Println("number1",number1)
+	/*	接口interface */
+	smtpInstance:=Smtp{account:"admin",key:"jugdejbggpre"}
+	smtpInstance.Send()
+	var mailer Mail=smtpInstance
+	mailer.Recv()
+	/* 检测实例类型是否是Smtp */
+	if _,ok:=mailer.(Smtp);ok{
+		fmt.Println("ok",ok)
+	}
+	/* 查询接口type */
+	switch v:=mailer.(type){
+	case nil:
+		fmt.Println("type",nil)
+	case Mail:
+		fmt.Println("type","Mail")
+	default:
+		fmt.Println("type",v)
+	}
+	/* go例程goroutine */
 	
-	
-
-
 }
+/* 方法methods */
+type ArrayType []int
+func (array ArrayType) foreach() int{
+	fmt.Println("foreach")
+	for _,v:=range array{
+		fmt.Println(v)
+	}
+	return 1
+}
+type Int int
+func (a *Int)set(b Int)Int{
+	*a=b
+	return b
+}
+/*	接口interface */
+type Mail interface{
+	Send() bool
+	Recv() bool
+}
+type Smtp struct{
+	account string
+	key string
+}
+func (s Smtp) Send() bool{
+	fmt.Println("send mail")
+	return true
+}
+func (s Smtp) Recv() bool{
+	fmt.Println("received mail")
+	return true
+}
+
+
+
+	
