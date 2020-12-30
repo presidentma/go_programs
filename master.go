@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import ("fmt"
+"runtime"
+		)
 
 func main(){
 	var arrBuf ArrayType=[]int{5,6,7,9}
@@ -132,6 +134,42 @@ func main(){
 		fmt.Println("type",v)
 	}
 	/* go例程goroutine */
+	go func(){
+		sum :=0
+		for i:=0;i<100;i++{
+			sum+=1
+		}
+		println("--------goroutine----------")
+		println(sum)
+	}()
+	/* 管道chan */
+	ch := make(chan struct{})
+	ci := make(chan int,100)
+	go func(ch chan struct{},ci chan int){
+		println("-----------chan------------")
+		sum :=0
+		for i:=0;i<10;i++{
+			ci<-i
+		}
+		close(ci)
+		println(sum)
+		ch <- struct{}{}
+	}(ch,ci)
+	<-ch	//读通道ch，通过通道进行同步等待,读通道后其匿名函数启动的goroutine会退出NumGoroutine
+	println ("NumGoroutine=", runtime.NumGoroutine())
+	/* 多路io select */
+	chSelect:=make(chan int,1)
+	go func(chan int){
+		for{
+			select{
+			case chSelect<- 0:
+			case chSelect<- 1:
+			}
+		}
+	}(chSelect)
+	for i:=0;i<5;i++{
+		println(<-chSelect)
+	}
 	
 }
 /* 方法methods */
